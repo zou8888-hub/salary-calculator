@@ -125,25 +125,69 @@ function applyTranslations() {
     console.log('开始应用翻译');
     
     // 更新标题
-    document.querySelector('.title').textContent = translations.appTitle;
+    const titleElement = document.querySelector('.title');
+    if (titleElement) {
+        titleElement.textContent = translations.appTitle;
+    }
     
     // 更新输入标签
-    elements.monthlySalary.previousElementSibling.textContent = translations.inputLabels.monthlySalary;
-    elements.workDays.previousElementSibling.textContent = translations.inputLabels.workDays;
-    elements.startTime.previousElementSibling.textContent = translations.inputLabels.startTime;
-    elements.endTime.previousElementSibling.textContent = translations.inputLabels.endTime;
-    elements.lunchBreak.previousElementSibling.textContent = translations.inputLabels.lunchBreak;
+    if (elements.monthlySalary && elements.monthlySalary.previousElementSibling) {
+        elements.monthlySalary.previousElementSibling.textContent = translations.inputLabels.monthlySalary;
+    }
+    if (elements.workDays && elements.workDays.previousElementSibling) {
+        elements.workDays.previousElementSibling.textContent = translations.inputLabels.workDays;
+    }
+    if (elements.startTime && elements.startTime.previousElementSibling) {
+        elements.startTime.previousElementSibling.textContent = translations.inputLabels.startTime;
+    }
+    if (elements.endTime && elements.endTime.previousElementSibling) {
+        elements.endTime.previousElementSibling.textContent = translations.inputLabels.endTime;
+    }
+    if (elements.lunchBreak && elements.lunchBreak.previousElementSibling) {
+        elements.lunchBreak.previousElementSibling.textContent = translations.inputLabels.lunchBreak;
+    }
     
     // 更新按钮文本
-    elements.startBtn.textContent = translations.buttons.start;
-    elements.endBtn.textContent = translations.buttons.end;
-    elements.resetBtn.textContent = translations.buttons.reset;
+    if (elements.startBtn) {
+        elements.startBtn.textContent = translations.buttons.start;
+    }
+    if (elements.endBtn) {
+        elements.endBtn.textContent = translations.buttons.end;
+    }
+    if (elements.resetBtn) {
+        elements.resetBtn.textContent = translations.buttons.reset;
+    }
     
     // 更新显示文本
-    elements.earnedAmount.previousElementSibling.previousElementSibling.textContent = translations.displayTexts.earned;
-    elements.earnedAmount.nextElementSibling.textContent = translations.displayTexts.yuan;
-    elements.elapsedTime.previousElementSibling.textContent = translations.displayTexts.usedTime;
-    elements.moneyPerMinute.previousElementSibling.previousElementSibling.textContent = translations.displayTexts.perMinute;
+    // 获取"我挣到了"文本元素
+    if (elements.earnedAmount && elements.earnedAmount.parentElement) {
+        const earnedTextElement = elements.earnedAmount.parentElement.previousElementSibling;
+        if (earnedTextElement) {
+            earnedTextElement.textContent = translations.displayTexts.earned;
+        }
+        
+        // 获取"元"文本元素
+        const yuanTextElement = elements.earnedAmount.parentElement.nextElementSibling;
+        if (yuanTextElement) {
+            yuanTextElement.textContent = translations.displayTexts.yuan;
+        }
+    }
+    
+    // 获取"用时间"文本元素
+    if (elements.elapsedTime) {
+        const usedTimeTextElement = elements.elapsedTime.previousElementSibling;
+        if (usedTimeTextElement) {
+            usedTimeTextElement.textContent = translations.displayTexts.usedTime;
+        }
+    }
+    
+    // 获取"每分钟挣"文本元素
+    if (elements.moneyPerMinute && elements.moneyPerMinute.parentElement) {
+        const perMinuteTextElement = elements.moneyPerMinute.parentElement.previousElementSibling;
+        if (perMinuteTextElement) {
+            perMinuteTextElement.textContent = translations.displayTexts.perMinute;
+        }
+    }
     
     console.log('翻译应用完成');
 }
@@ -566,6 +610,11 @@ function dropCoins(value) {
 
 // 创建单个金币
 function createCoin() {
+    if (!elements.coinContainer) {
+        console.error('金币容器不存在');
+        return;
+    }
+    
     const coin = document.createElement('div');
     coin.className = 'coin sparkle';
     
