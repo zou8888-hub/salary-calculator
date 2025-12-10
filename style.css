@@ -1,0 +1,424 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+    color: #fff;
+    min-height: 100vh;
+    overflow: auto;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.title {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 40px;
+    background: linear-gradient(45deg, #ffd700, #ffed4e, #ffd700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: titleGlow 2s ease-in-out infinite alternate;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+@keyframes titleGlow {
+    from { text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+    to { text-shadow: 0 0 40px rgba(255, 215, 0, 0.8), 0 0 60px rgba(255, 215, 0, 0.3); }
+}
+
+.input-section {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 40px;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.input-group {
+    flex: 1;
+    min-width: calc(50% - 10px);
+    margin-bottom: 5px; /* 减少三分之二的行间距 */
+    text-align: left;
+}
+
+.input-group-full {
+    min-width: 100%;
+    margin-bottom: 8px; /* 减少三分之二的行间距 */
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    margin-top: 25px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #ffd700;
+    font-weight: bold;
+    font-size: 0.9rem; /* 减小文字大小 */
+}
+
+.input-group input {
+    width: 100%;
+    padding: 4px 10px; /* 进一步减小输入框高度 */
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    font-size: 0.9rem; /* 减小输入框文字大小 */
+    transition: all 0.3s ease;
+    height: 28px; /* 进一步固定输入框高度 */
+    box-sizing: border-box;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #ffd700;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.start-btn, .reset-btn, .end-btn {
+    padding: 15px 30px;
+    margin: 10px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 120px;
+}
+
+.start-btn {
+    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    color: #000;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+}
+
+.start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
+}
+
+.reset-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffd700;
+    border: 2px solid #ffd700;
+}
+
+.reset-btn:hover {
+    background: rgba(255, 215, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.end-btn {
+    background: linear-gradient(45deg, #ff8c00, #ff6b35);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(255, 140, 0, 0.4);
+}
+
+.end-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 140, 0, 0.6);
+}
+
+.display-section {
+    background: rgba(255, 215, 0, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 30px;
+    padding: 40px;
+    border: 2px solid rgba(255, 215, 0, 0.5);
+    box-shadow: 0 15px 40px rgba(255, 215, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 60px; /* 增加显示框和输入框之间的空间 */
+}
+
+.earned-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.earned-row, .time-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* 减小时间行文字大小 */
+.time-row .earned-text {
+    font-size: 1.2rem;
+}
+
+.earned-text {
+    font-size: 1.8rem;
+    color: #ffed4e;
+    font-weight: bold;
+    margin: 0 10px;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+}
+
+.earned-amount-container {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+}
+
+.earned-amount {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+    font-family: 'Courier New', monospace;
+    animation: numberScroll 1s ease-in-out;
+}
+
+.elapsed-time {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+    font-family: 'Courier New', monospace;
+    /* 移除跳动效果 */
+}
+
+.salary-display {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.currency-symbol {
+    font-size: 3rem;
+    color: #ffd700;
+    font-weight: bold;
+    margin-right: 10px;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+}
+
+.salary-amount {
+    font-size: 6rem;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+    font-family: 'Courier New', monospace;
+}
+
+.salary-label {
+    font-size: 1.5rem;
+    color: #ffed4e;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.coin-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 100;
+}
+
+.coin {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    border-radius: 50%;
+    animation: coinFall 3s ease-in forwards;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+    text-align: center;
+    line-height: 50px;
+    font-weight: bold;
+    color: #000;
+    font-size: 1.2rem;
+}
+
+@keyframes coinFall {
+    0% {
+        transform: translateY(-100px) rotate(0deg) scale(0);
+        opacity: 1;
+    }
+    20% {
+        transform: translateY(5vh) rotate(72deg) scale(1.2);
+        opacity: 1;
+    }
+    40% {
+        transform: translateY(20vh) rotate(144deg) scale(1);
+        opacity: 1;
+    }
+    60% {
+        transform: translateY(40vh) rotate(216deg) scale(0.9);
+        opacity: 0.9;
+    }
+    80% {
+        transform: translateY(70vh) rotate(288deg) scale(0.8);
+        opacity: 0.5;
+    }
+    100% {
+        transform: translateY(120vh) rotate(360deg) scale(0.5);
+        opacity: 0;
+    }
+}
+
+.coin::before {
+    content: '¥';
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.coin.sparkle {
+    animation: coinFall 3s ease-in forwards, sparkle 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes sparkle {
+    from { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+    to { box-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 0 40px rgba(255, 215, 0, 0.8); }
+}
+
+.money-animation {
+    animation: moneyGrow 0.5s ease-in-out;
+}
+
+@keyframes moneyGrow {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+@media (max-width: 768px) {
+    .title {
+        font-size: 2rem;
+    }
+    
+    .salary-amount {
+        font-size: 4rem;
+    }
+    
+    .currency-symbol {
+        font-size: 2rem;
+    }
+    
+    .input-section {
+        padding: 20px;
+        flex-direction: column;
+    }
+    
+    .input-group {
+        min-width: 100%;
+    }
+    
+    .display-section {
+        padding: 20px;
+        margin-bottom: 40px;
+    }
+    
+    .earned-text {
+        font-size: 1.4rem;
+    }
+    
+    .earned-amount {
+        font-size: 3rem;
+    }
+    
+    .elapsed-time {
+        font-size: 1.5rem;
+    }
+    
+    .button-container {
+        flex-direction: column;
+    }
+    
+    .start-btn, .reset-btn, .end-btn {
+        width: 100%;
+        margin: 5px 0;
+        padding: 12px 20px;
+    }
+}
+
+/* 字幕样式 */
+.subtitle-container {
+    position: fixed;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    pointer-events: none;
+    z-index: 200;
+    transform: translateY(-50%);
+}
+
+.subtitle {
+    display: inline-block;
+    font-size: 3rem;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.8), 0 0 50px rgba(255, 215, 0, 0.5);
+    animation: subtitleAppear 3s ease-in-out forwards;
+    background: linear-gradient(45deg, #ffd700, #ffed4e, #ffd700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+@keyframes subtitleAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0.5) translateY(20px);
+    }
+    20% {
+        opacity: 1;
+        transform: scale(1.2) translateY(0);
+    }
+    30% {
+        transform: scale(1);
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.8) translateY(-20px);
+    }
+}
+
+@keyframes numberScroll {
+    0% {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

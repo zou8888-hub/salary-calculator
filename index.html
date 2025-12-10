@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实时工资计算器</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">实时工资计算器</h1>
+        
+        <div class="display-section">
+            <div class="earned-display">
+                <div class="earned-row">
+                    <span class="earned-text">我挣到了</span>
+                    <div class="earned-amount-container">
+                        <div class="currency-symbol">¥</div>
+                        <div id="earnedAmount" class="earned-amount">0.00</div>
+                    </div>
+                    <span class="earned-text">元</span>
+                </div>
+                <div class="time-row">
+                    <span class="earned-text">用时间</span>
+                    <div id="elapsedTime" class="elapsed-time">00:00:00</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-section">
+            <div class="input-group">
+                <label for="monthlySalary">月薪 (元)</label>
+                <input type="number" id="monthlySalary" placeholder="输入月薪" min="0" step="100">
+            </div>
+            
+            <div class="input-group">
+                <label for="workDays">每月工作天数</label>
+                <input type="number" id="workDays" placeholder="输入工作天数" min="1" max="31">
+            </div>
+            
+            <div class="input-group">
+                <label for="startTime">上班时间</label>
+                <input type="time" id="startTime" value="09:00">
+            </div>
+            
+            <div class="input-group">
+                <label for="endTime">下班时间</label>
+                <input type="time" id="endTime" value="18:00">
+            </div>
+            
+            <div class="input-group input-group-full">
+                <label for="lunchBreak">午休时间 (分钟)</label>
+                <input type="number" id="lunchBreak" placeholder="输入午休时间" min="0" max="240" value="60">
+            </div>
+            
+            <div class="button-container">
+                <button id="startBtn" class="start-btn">开始计算</button>
+                <button id="endBtn" class="end-btn">结束计算</button>
+                <button id="resetBtn" class="reset-btn">重置</button>
+            </div>
+        </div>
+        
+        <div id="coinContainer" class="coin-container"></div>
+        <div id="subtitleContainer" class="subtitle-container"></div>
+    </div>
+    
+    <audio id="coinSound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=" type="audio/wav">
+    </audio>
+    
+    <script src="script.js"></script>
+</body>
+</html>
