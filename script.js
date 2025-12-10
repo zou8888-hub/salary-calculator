@@ -6,13 +6,92 @@ let startTime = null;
 let endTime = null;
 let secondsPerDay = 0;
 let moneyPerSecond = 0;
+let moneyPerMinute = 0;
 let currentSalary = 0;
 let startTimeStamp = null;
 let intervalId = null;
 let lastCoinValue = 0;
 
+// 国际化相关变量
+let currentLanguage = 'en-US';
+let translations = {};
+
 // DOM元素引用
 let elements = {};
+
+// 检测用户系统语言
+function detectUserLanguage() {
+    // 获取用户浏览器语言
+    const browserLanguage = navigator.language || navigator.userLanguage;
+    console.log('检测到浏览器语言:', browserLanguage);
+    
+    // 支持的语言列表
+    const supportedLanguages = ['zh-CN', 'en-US'];
+    
+    // 检查是否有完全匹配的语言
+    if (supportedLanguages.includes(browserLanguage)) {
+        currentLanguage = browserLanguage;
+    } else {
+        // 检查语言前缀匹配（如zh匹配zh-CN）
+        const languagePrefix = browserLanguage.split('-')[0];
+        const matchingLanguage = supportedLanguages.find(lang => lang.startsWith(languagePrefix));
+        
+        if (matchingLanguage) {
+            currentLanguage = matchingLanguage;
+        } else {
+            // 默认使用英文
+            currentLanguage = 'en-US';
+        }
+    }
+    
+    console.log('最终选择的语言:', currentLanguage);
+    return currentLanguage;
+}
+
+// 加载指定语言的翻译文件
+async function loadTranslations(language) {
+    try {
+        const response = await fetch(`lang/${language}.json`);
+        if (!response.ok) {
+            throw new Error(`Failed to load translations for ${language}`);
+        }
+        translations = await response.json();
+        console.log('翻译文件加载成功:', language);
+        return translations;
+    } catch (error) {
+        console.error('加载翻译文件失败:', error);
+        // 如果加载失败，使用默认的英文翻译
+        return await loadTranslations('en-US');
+    }
+}
+
+// 应用翻译
+function applyTranslations() {
+    console.log('开始应用翻译');
+    
+    // 更新标题
+    document.querySelector('.title').textContent = translations.appTitle;
+    
+    // 更新输入标签
+    elements.monthlySalary.previousElementSibling.textContent = translations.inputLabels.monthlySalary;
+    elements.workDays.previousElementSibling.textContent = translations.inputLabels.workDays;
+    elements.startTime.previousElementSibling.textContent = translations.inputLabels.startTime;
+    elements.endTime.previousElementSibling.textContent = translations.inputLabels.endTime;
+    elements.lunchBreak.previousElementSibling.textContent = translations.inputLabels.lunchBreak;
+    
+    // 更新按钮文本
+    elements.startBtn.textContent = translations.buttons.start;
+    elements.endBtn.textContent = translations.buttons.end;
+    elements.resetBtn.textContent = translations.buttons.reset;
+    
+    // 更新显示文本
+    elements.earnedAmount.previousElementSibling.previousElementSibling.textContent = translations.displayTexts.earned;
+    elements.earnedAmount.nextElementSibling.textContent = translations.displayTexts.yuan;
+    elements.elapsedTime.previousElementSibling.textContent = translations.displayTexts.usedTime;
+    elements.moneyPerMinute.previousElementSibling.previousElementSibling.textContent = translations.displayTexts.perMinute;
+    
+    console.log('翻译应用完成');
+}
 
 // 格式化时间为HH:MM:SS格式
 function formatTime(seconds) {
@@ -23,7 +102,7 @@ function formatTime(seconds) {
 }
 
 // 页面加载完成后初始化
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     console.log('=== 实时工资计算器加载完成 ===');
     
     // 获取DOM元素
@@ -39,6 +118,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // elements.currentSalary = document.getElementById('currentSalary'); // 此元素不存在，已注释
     elements.earnedAmount = document.getElementById('earnedAmount');
     elements.elapsedTime = document.getElementById('elapsedTime');
+    elements.moneyPerMinute = document.getElementById('moneyPerMinute');
+    elements.moneyPerMinuteRow = document.getElementById('moneyPerMinuteRow');
     elements.coinContainer = document.getElementById('coinContainer');
     elements.subtitleContainer = document.getElementById('subtitleContainer');
     elements.coinSound = document.getElementById('coinSound');
@@ -56,6 +137,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // console.log('currentSalary:', !!elements.currentSalary); // 此元素不存在，已注释
     console.log('earnedAmount:', !!elements.earnedAmount);
     console.log('elapsedTime:', !!elements.elapsedTime);
+    console.log('moneyPerMinute:', !!elements.moneyPerMinute);
+    console.log('moneyPerMinuteRow:', !!elements.moneyPerMinuteRow);
     console.log('coinContainer:', !!elements.coinContainer);
     console.log('subtitleContainer:', !!elements.subtitleContainer);
     console.log('coinSound:', !!elements.coinSound);
@@ -66,6 +149,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 验证音效函数
     console.log('playCoinSound是否为函数:', typeof elements.playCoinSound === 'function');
+    
+    // 语言检测和翻译加载
+    console.log('开始语言检测和翻译加载');
+    detectUserLanguage();
+    await loadTranslations(currentLanguage);
+    applyTranslations();
     
     // 绑定事件监听器
     console.log('绑定事件监听器');
@@ -90,6 +179,16 @@ function bindEvents() {
             clearInterval(intervalId);
             intervalId = null;
         }
+        
+        // 显示每分钟挣钱结果
+        if (moneyPerSecond > 0) {
+            elements.moneyPerMinute.textContent = moneyPerMinute.toFixed(2);
+            elements.moneyPerMinuteRow.style.display = 'block';
+        } else {
+            // 即使为0也显示，确保用户看到结果
+            elements.moneyPerMinute.textContent = '0.00';
+            elements.moneyPerMinuteRow.style.display = 'block';
+        }
     });
     
     // 重置按钮点击事件
@@ -110,17 +209,17 @@ function startCalculation() {
     
     // 验证输入
     if (!salaryValue || isNaN(parseFloat(salaryValue)) || parseFloat(salaryValue) <= 0) {
-        alert('请输入有效的月薪');
+        alert(translations.messages.invalidSalary);
         return;
     }
     
     if (!daysValue || isNaN(parseInt(daysValue)) || parseInt(daysValue) <= 0) {
-        alert('请输入有效的工作天数');
+        alert(translations.messages.invalidWorkDays);
         return;
     }
     
     if (!lunchBreakValue || isNaN(parseInt(lunchBreakValue)) || parseInt(lunchBreakValue) < 0) {
-        alert('请输入有效的午休时间');
+        alert(translations.messages.invalidLunchBreak);
         return;
     }
     
@@ -140,19 +239,21 @@ function startCalculation() {
     // 扣除午休时间
     secondsPerDay = Math.max(0, secondsPerDay - lunchBreakSeconds);
     if (secondsPerDay <= 0) {
-        alert('扣除午休时间后，每天工作时间不能为0');
+        alert(translations.messages.noWorkingTime);
         return;
     }
     
     // 计算每秒工资
     const dailySalary = monthlySalary / workDays;
     moneyPerSecond = dailySalary / secondsPerDay;
+    moneyPerMinute = moneyPerSecond * 60;
     
     console.log('计算参数:', {
         monthlySalary,
         workDays,
         secondsPerDay,
-        moneyPerSecond
+        moneyPerSecond,
+        moneyPerMinute
     });
     
     // 初始化计时
@@ -191,8 +292,11 @@ function resetCalculation() {
     // elements.currentSalary.textContent = '0.00'; // 此元素不存在，已注释
     elements.earnedAmount.textContent = '0.00';
     elements.elapsedTime.textContent = '00:00:00';
+    elements.moneyPerMinute.textContent = '0.00';
+    elements.moneyPerMinuteRow.style.display = 'none';
     // elements.currentSalary.classList.remove('money-animation'); // 此元素不存在，已注释
     elements.earnedAmount.classList.remove('money-animation');
+    // elements.moneyPerMinute.classList.remove('money-animation'); // 移除每分钟挣钱动画
     // elements.elapsedTime.classList.remove('money-animation'); // 移除时间动画
     
     // 清空金币容器
@@ -242,10 +346,12 @@ function updateSalary() {
     // 添加动画效果（仅保留金额动画，移除时间动画）
             // elements.currentSalary.classList.add('money-animation'); // 此元素不存在，已注释
             elements.earnedAmount.classList.add('money-animation');
+            // elements.moneyPerMinute.classList.add('money-animation'); // 移除每分钟挣钱动画
             // elements.elapsedTime.classList.add('money-animation'); // 移除时间动画
             setTimeout(() => {
                 // elements.currentSalary.classList.remove('money-animation'); // 此元素不存在，已注释
                 elements.earnedAmount.classList.remove('money-animation');
+                // elements.moneyPerMinute.classList.remove('money-animation'); // 移除每分钟挣钱动画
                 // elements.elapsedTime.classList.remove('money-animation'); // 移除时间动画
             }, 500);
     
@@ -345,7 +451,7 @@ function showSubtitle(value) {
     
     const subtitle = document.createElement('div');
     subtitle.className = 'subtitle';
-    subtitle.textContent = `你已经挣了${value}元！`;
+    subtitle.textContent = translations.messages.earnedSubtitle.replace('${value}', value);
     
     elements.subtitleContainer.appendChild(subtitle);
     
