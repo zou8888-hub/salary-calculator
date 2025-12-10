@@ -49,20 +49,75 @@ function detectUserLanguage() {
 }
 
 // 加载指定语言的翻译文件
-async function loadTranslations(language) {
-    try {
-        const response = await fetch(`lang/${language}.json`);
-        if (!response.ok) {
-            throw new Error(`Failed to load translations for ${language}`);
+function loadTranslations(language) {
+    // 定义翻译数据（内嵌默认翻译，避免依赖外部文件）
+    const defaultTranslations = {
+        "appTitle": "Real-time Salary Calculator",
+        "inputLabels": {
+            "monthlySalary": "Monthly Salary (¥)",
+            "workDays": "Working Days Per Month",
+            "startTime": "Start Time",
+            "endTime": "End Time",
+            "lunchBreak": "Lunch Break (minutes)"
+        },
+        "buttons": {
+            "start": "Start Calculation",
+            "end": "End Calculation",
+            "reset": "Reset"
+        },
+        "displayTexts": {
+            "earned": "I've earned",
+            "yuan": "yuan",
+            "usedTime": "Time used",
+            "perMinute": "Earn per minute"
+        },
+        "messages": {
+            "invalidSalary": "Please enter a valid monthly salary",
+            "invalidWorkDays": "Please enter valid working days",
+            "invalidLunchBreak": "Please enter a valid lunch break time",
+            "noWorkingTime": "After deducting lunch break, daily working time cannot be zero",
+            "earnedSubtitle": "You've earned ${value} yuan!"
         }
-        translations = await response.json();
-        console.log('翻译文件加载成功:', language);
-        return translations;
-    } catch (error) {
-        console.error('加载翻译文件失败:', error);
-        // 如果加载失败，使用默认的英文翻译
-        return await loadTranslations('en-US');
+    };
+
+    // 中文翻译
+    const chineseTranslations = {
+        "appTitle": "实时工资计算器",
+        "inputLabels": {
+            "monthlySalary": "月薪 (元)",
+            "workDays": "每月工作天数",
+            "startTime": "上班时间",
+            "endTime": "下班时间",
+            "lunchBreak": "午休时间 (分钟)"
+        },
+        "buttons": {
+            "start": "开始计算",
+            "end": "结束计算",
+            "reset": "重置"
+        },
+        "displayTexts": {
+            "earned": "我挣到了",
+            "yuan": "元",
+            "usedTime": "用时间",
+            "perMinute": "每分钟挣"
+        },
+        "messages": {
+            "invalidSalary": "请输入有效的月薪",
+            "invalidWorkDays": "请输入有效的工作天数",
+            "invalidLunchBreak": "请输入有效的午休时间",
+            "noWorkingTime": "扣除午休时间后，每天工作时间不能为0",
+            "earnedSubtitle": "你已经挣了${value}元！"
+        }
+    };
+
+    // 根据语言返回对应的翻译
+    if (language === 'zh-CN') {
+        translations = chineseTranslations;
+    } else {
+        translations = defaultTranslations;
     }
+    console.log('翻译加载成功:', language);
+    return translations;
 }
 
 // 应用翻译
@@ -102,7 +157,7 @@ function formatTime(seconds) {
 }
 
 // 页面加载完成后初始化
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', function() {
     console.log('=== 实时工资计算器加载完成 ===');
     
     // 获取DOM元素
@@ -153,7 +208,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     // 语言检测和翻译加载
     console.log('开始语言检测和翻译加载');
     detectUserLanguage();
-    await loadTranslations(currentLanguage);
+    loadTranslations(currentLanguage);
     applyTranslations();
     
     // 绑定事件监听器
